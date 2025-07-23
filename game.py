@@ -5,7 +5,6 @@ from scripts.utils import load_image, load_images
 from scripts.tilemap import Tilemap
 from scripts.clouds import Clouds
 
-
 class Game:
     def __init__(self):
         pygame.init()
@@ -27,7 +26,7 @@ class Game:
             'clouds': load_images('clouds')
         }
 
-        self.clouds = Clouds(self.assets['clouds'], count=5)
+        self.clouds = Clouds(self.assets['clouds'], count=16)
         self.player = PhysicsEntity(self, 'player', (50, 50), (8, 15))
 
         self.tilemap = Tilemap(self, tile_size=16)
