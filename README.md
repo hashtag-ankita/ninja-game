@@ -69,6 +69,24 @@
 * Implemented **flipped animation** when the player faces left/right.
 * Created a **`Player` object** inheriting from `PhysicsEntity`, with player-specific settings.
 
+### 📅 Day 8 & 9 – *\[2025-07-29 → 2025-07-30]*
+
+* Built a **level editor** from scratch and added it via `editor.py`.
+* Enabled **tile placement and deletion** using the mouse — supports both **ongrid** and **offgrid** tiles.
+* Implemented **map navigation** using `W`, `A`, `S`, `D` keys.
+* Added **mouse scroll** to switch tile groups and **Shift + scroll** to cycle group variants.
+* Pressing `G` toggles between **ongrid/offgrid** placement mode (default: ongrid).
+* Pressing `O` allows you to **save the current map** as `map.json`.
+* Pressing `T` **autotiles grass and stone tiles** to simplify level creation.
+* Fixed an issue with **left-direction collision detection** allowing slight overlap.
+
+---
+
+### 📅 Day 10 – *\[2025-07-31]*
+
+* Added a new file: **`particle.py`**.
+* Implemented a **leaf fall particle effect** for trees, adding natural ambience to the environment.
+
 ---
 
 ## 📌 Notes
