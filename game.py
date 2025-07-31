@@ -97,6 +97,13 @@ class Game:
                     if event.key == pygame.K_RIGHT:
                         self.movement[1] = False
 
+            # * Self-addition: To reset the player position if they fall off the screen
+            if self.player.pos[1] > 240:
+                self.player.pos[1] = 50
+                self.player.pos[0] = 50
+                self.player.velocity = [0, 0]
+                self.scroll = [0, 0]
+                
             self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0, 0))
             pygame.display.update()
             self.clock.tick(60)
