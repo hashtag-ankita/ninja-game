@@ -1,4 +1,7 @@
 import pygame
+import math
+import random
+from scripts.particle import Particle
 
 class PhysicsEntity:
     def __init__(self, game, e_type, pos, size):
@@ -88,15 +91,18 @@ class Player(PhysicsEntity):
         self.air_time = 0
         self.jumps = 1
         self.wall_slide = False
+        self.dashing = 0
 
     def update(self, tilemap, movement=(0, 0)):
         super().update(tilemap, movement=movement)
 
+        #* To reset the air time and jump when the player is on the ground
         self.air_time += 1
         if self.collisions['down']:
             self.air_time = 0
             self.jumps = 1
 
+        #* To manage the wall slide mechanics
         self.wall_slide = False
         if (self.collisions['right'] or self.collisions['left']) and self.air_time > 4:
             self.wall_slide = True
@@ -107,6 +113,7 @@ class Player(PhysicsEntity):
                 self.flip = True
             self.set_action('wall_slide')
 
+        #* To manage the player actions based on the movement and air time
         if not self.wall_slide:
             if self.air_time > 4:
                 self.set_action('jump')
@@ -115,10 +122,33 @@ class Player(PhysicsEntity):
             else:
                 self.set_action('idle')
 
+        #* To manage the dash attack mechanics
+        if abs(self.dashing) in {60, 50}:
+            for i in range(20):
+                #* Stream of particles after dashing
+                angle = random.random() * math.pi * 2
+                speed = random.random() * 0.5 + 0.5
+                pvelocity = [math.cos(angle) * speed, math.sin(angle) * speed] #* Important math line for particle velocity in any game
+                self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=pvelocity, frame=random.randint(0, 7)))
+        if self.dashing > 0:
+            self.dashing = max(0, self.dashing - 1)
+        if self.dashing < 0:
+            self.dashing = min(0, self.dashing + 1)
+        if abs(self.dashing) > 50:
+            self.velocity[0] = abs(self.dashing) / self.dashing * 8 # type: ignore
+            if abs(self.dashing) == 51:
+                self.velocity[0] *= 0.1 #* Sudden stop after dashing # type: ignore
+            pvelocity = [abs(self.dashing) / self.dashing * random.random() * 3, 0]
+            self.game.particles.append(Particle(self.game, 'particle', self.rect().center, velocity=pvelocity, frame=random.randint(0, 7)))
+
         if self.velocity[0] > 0:
             self.velocity[0] = max(self.velocity[0] - 0.1, 0)  # type: ignore
-        if self.velocity[0] < 0:
+        else:
             self.velocity[0] = min(self.velocity[0] + 0.1, 0)  # type: ignore
+
+    def render(self, surf, offset=(0, 0)):
+        if abs(self.dashing) <= 50:
+            super().render(surf, offset=offset)
 
     def jump(self):
         if self.wall_slide:
@@ -139,3 +169,11 @@ class Player(PhysicsEntity):
             self.jumps -= 1
             self.air_time = 5
             return True
+        
+    
+    def dash(self):
+        if not self.dashing:
+            if self.flip: # facing left
+                self.dashing = -60
+            else: # facing right
+                self.dashing = 60
